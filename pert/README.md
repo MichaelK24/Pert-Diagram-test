@@ -1,4 +1,4 @@
-Team: Special Force 
+Team: Special Force ![Pert Chart logo](https://github.com/user-attachments/assets/230052a6-83e2-416e-9ede-274026cfe213) 
 
 Pert Chart Simulator: Readme  
 
@@ -21,8 +21,6 @@ OS: Any (Windows, macOS, Linux, Android, iOS)
 Hardware: Any device with a web browser and an internet connection.   
 
 QR Code:  
-
- ![Pert Chart logo](https://github.com/user-attachments/assets/230052a6-83e2-416e-9ede-274026cfe213)
 <img width="1000" height="1000" alt="URL QR Code" src="https://github.com/user-attachments/assets/ca152146-b598-4118-99de-7a366becbdcb" />
 
 
