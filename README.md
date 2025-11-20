@@ -23,4 +23,5 @@ OS: Any (Windows, macOS, Linux, Android, iOS)
 Hardware: Any device with a web browser and an internet connection.
 
 QR Code:
-image
+<img width="154" height="151" alt="image" src="https://github.com/user-attachments/assets/5b6e7ab8-c174-471c-b699-c4343564b6df" />
+
