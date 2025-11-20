@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PERT Simulator - Interactive Quiz (Game)</title>
+    <link rel="stylesheet" href="style.css">
+        <style>
+       
+            body{
+                background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.40)), url('michael/images/wqe.png') center/cover no-repeat fixed;
+ 
+                background-position: center 8%;
+            }
+      
+            #app-container{background:rgba(255,255,255,0.02);}
+        </style>
+</head> 
+<body>
+
+    <div id="app-container">
+        <img src="michael/images/logopng.png" alt="PERT Diagram" class="game-logo">
+        <div id="graph-container"></div> 
+        <div id="task-table">
+<pre>
+Task  Len  Pred
+A     5    -
+B     5    A
+C     3    A
+D     4    B,C
+E     5    D
+F     3    D
+G     6    E,F
+</pre>
+        </div>
+        <div id="controls">
+            <button id="check-btn">Check</button>
+        </div>
+    </div>
+
+    <script src="michael/ChartGen.js"></script>
+    <script src="pert_ui.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

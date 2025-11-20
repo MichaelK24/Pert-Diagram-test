@@ -1,4 +1,5 @@
-body {
+body
+{
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #3B597A;
     display: grid;
@@ -8,96 +9,302 @@ body {
     color: white;
 }
 
-#app-container {
-    width: 1000px;
-    height: 650px; 
+#app-container
+{
+    width: 100vw;
+    height: 100vh;
     position: relative;
-}
-
-#check-btn {
-    background-color: #c0c0c0;
-    color: #333;
-    font-size: 18px;
-    font-weight: 600;
-    padding: 12px 25px;
-    border: 2px solid #888;
-    border-radius: 8px;
-    cursor: pointer;
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-}
-#check-btn:hover { background-color: #d0d0d0; }
-
-#task-table {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 18px;
-    line-height: 1.6;
-}
-#task-table pre {
     margin: 0;
 }
 
-.pert-node {
+.game-logo
+{
     position: absolute;
-    width: 140px;
-    height: 100px;
+    bottom: clamp(20px, 3vh, 40px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: clamp(120px, 18vw, 200px);
+    height: auto;
+    z-index: 100;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+}
+
+#graph-container
+{
+    position: absolute;
+    top: clamp(30px, 4vh, 48px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.pert-arrows
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.pert-arrows path,
+.arrow-line
+{
+    stroke-width: clamp(2px, 0.3vw, 4px);
+}
+
+#controls
+{
+    position: absolute;
+    bottom: clamp(10px, 2vh, 20px);
+    right: clamp(10px, 2vw, 20px);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+#check-btn
+{
+    background-color: #c0c0c0;
+    color: #333;
+    font-size: clamp(14px, 1.5vw, 18px);
+    font-weight: 600;
+    padding: clamp(8px, 1.2vh, 12px) clamp(15px, 2vw, 25px);
+    border: 2px solid #888;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#check-btn:hover
+{
+    background-color: #d0d0d0;
+}
+
+#score-display
+{
+    font-family: 'Courier New', Courier, monospace;
+    font-size: clamp(14px, 1.4vw, 16px);
+    color: #fff;
+    opacity: 0.95;
+    display: none;
+}
+
+#score-percent
+{
+    color: #ffd54f;
+    font-weight: 700;
+}
+
+#task-table
+{
+    position: absolute;
+    bottom: clamp(10px, 2vh, 20px);
+    left: clamp(10px, 2vw, 20px);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: clamp(14px, 1.5vw, 18px);
+    line-height: 1.6;
+}
+
+#task-table pre
+{
+    margin: 0;
+}
+
+.pert-node
+{
+    position: absolute;
+    width: clamp(160px, 15vw, 220px);
+    height: clamp(140px, 16vh, 190px);
     background-color: #37ABA9;
     border: 3px solid #2a8e8c;
     border-radius: 6px;
     color: white;
-    
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
+    box-sizing: border-box;
 }
 
-.pert-node div {
-    display: grid;
-    place-items: center;
-    font-size: 11px;
+.pert-node div
+{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(10px, 1.1vw, 13px);
+    padding: 2px;
+    overflow: visible;
 }
-.pert-node .task-name {
+
+.pert-node .task-name
+{
     grid-column: 1 / -1;
     grid-row: 2;
-    font-size: 24px;
-    font-weight: bold;
+    font-size: clamp(22px, 2.5vw, 32px);
+    font-weight: 700;
 }
 
-.pert-node input {
-    width: 30px;
-    height: 18px;
+.pert-node input
+{
+    width: clamp(28px, 2.8vw, 38px);
+    height: clamp(16px, 1.8vh, 22px);
     border: 2px solid #2a8e8c;
     background-color: #f0f8ff;
     color: #333;
     text-align: center;
-    font-weight: 600;
-    border-radius: 3px;
+    font-weight: 700;
+    border-radius: 4px;
+    font-size: clamp(10px, 1.1vw, 13px);
+    box-sizing: border-box;
+    max-width: 85%;
+    max-height: 85%;
 }
-.pert-node input:focus {
+
+.pert-node input:focus
+{
     outline: 2px solid #007aff;
 }
 
-.pert-node input.correct {
-    border-color: #28a745; 
+.pert-node input.correct
+{
+    border-color: #28a745;
     background-color: #d4edda;
 }
-.pert-node input.wrong {
-    border-color: #dc3545; 
+
+.pert-node input.wrong
+{
+    border-color: #dc3545;
     background-color: #f8d7da;
 }
 
-.pert-node .es::before { content: 'ES: '; }
-.pert-node .dur::before { content: 'Dur: '; }
-.pert-node .ef::before { content: 'EF: '; }
-.pert-node .ls::before { content: 'LS: '; }
-.pert-node .slack::before { content: 'Slack: '; }
-.pert-node .lf::before { content: 'LF: '; }
+.expected-hint
+{
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(8px, 0.9vw, 11px);
+    font-weight: 700;
+    color: #ffd54f;
+    background: rgba(220, 53, 69, 0.8);
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+}
 
-.pert-node.critical-highlight {
+@media (max-width: 768px)
+{
+    .pert-node
+    {
+        width: 130px;
+        height: 100px;
+    }
+    .pert-node div
+    {
+        font-size: 9px;
+    }
+    .pert-node .task-name
+    {
+        font-size: 20px;
+    }
+    .pert-node input
+    {
+        width: 30px;
+        height: 18px;
+        font-size: 11px;
+    }
+    #task-table
+    {
+        font-size: 12px;
+    }
+    #check-btn
+    {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+    .pert-arrows path
+    {
+        stroke-width: 2px;
+    }
+}
+
+@media (max-width: 480px)
+{
+    .pert-node
+    {
+        width: 110px;
+        height: 85px;
+    }
+    .pert-node div
+    {
+        font-size: 8px;
+        padding: 1px;
+    }
+    .pert-node .task-name
+    {
+        font-size: 17px;
+    }
+    .pert-node input
+    {
+        width: 26px;
+        height: 16px;
+        font-size: 10px;
+    }
+    #task-table
+    {
+        font-size: 10px;
+        bottom: 8px;
+        left: 8px;
+    }
+    #check-btn
+    {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+    #controls
+    {
+        bottom: 8px;
+        right: 8px;
+    }
+    .pert-arrows path
+    {
+        stroke-width: 2px;
+    }
+}
+
+.pert-node .es::before
+{
+    content: 'ES: ';
+}
+
+.pert-node .dur::before
+{
+    content: 'Dur: ';
+}
+
+.pert-node .ef::before
+{
+    content: 'EF: ';
+}
+
+.pert-node .ls::before
+{
+    content: 'LS: ';
+}
+
+.pert-node .slack::before
+{
+    content: 'Slack: ';
+}
+
+.pert-node .lf::before
+{
+    content: 'LF: ';
+}
+
+.pert-node.critical-highlight
+{
     border: 4px solid #dc3545;
     box-shadow: 0 0 15px rgba(220, 53, 69, 0.7);
 }

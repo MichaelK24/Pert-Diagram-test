@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PERT - Main Menu</title>
+  <link rel="stylesheet" href="mainmenu.css">
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="menu-container">
+    <img src="images/logopng.png" alt="PERT Diagram" class="logo-img">
+    <div class="logo">PERT Diagram</div>
+
+    <div class="spacer"></div>
+
+    <div class="buttons">
+      <button id="btn-start" class="menu-btn">Start</button>
+      <button id="btn-rules" class="menu-btn">Learn Pert</button>
+    </div>
+
+    <div class="learn-row">
+      <button id="btn-learn" class="menu-btn">Learn Mode</button>
+      <div id="learn-sub" class="sub-buttons lowered" aria-hidden="true">
+        <button id="btn-easy" class="menu-btn small">Easy</button>
+        <button id="btn-hard" class="menu-btn small">Hard</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="rules-panel" class="rules-panel" aria-hidden="true">
+    <div class="rules-content">
+      <button id="rules-close" class="close-btn">✕</button>
+      <h2>What is a PERT chart?</h2>
+      <p>A PERT (Program Evaluation Review Technique) chart models tasks (nodes) and their dependencies (edges). It helps estimate project timelines by showing earliest and latest start/finish times and slack.</p>
+      <div class="pert-images">
+        <img src="images/pert2.png" alt="PERT example 2">
+        <img src="images/pert3.png" alt="PERT example 3">
+      </div>
+      <p>Use the Learn Mode to practice filling earliest/latest times and slack. The <em>Start</em> button opens the interactive quiz.</p>
+    </div>
+  </div>
+  <script src="mainmenu.js"></script>
+</body>
+</html>
