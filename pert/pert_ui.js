@@ -1,12 +1,98 @@
-//pert ui js
-//michael king
-//handles graph rendering animation and sound management
+//abstract base class for arrow rendering strategy
+class ArrowRenderer
+{
+    //abstract method must be overridden by subclasses
+    draw(svg, fromEl, toEl, parentRect)
+    {
+        throw new Error('abstract method draw must be implemented by subclass');
+    }
 
-class GraphRenderer {
-    constructor(graphContainer) {
+    //helper to get coordinates relative to parent
+    _getCoords(el, parentRect, edge)
+    {
+        const rect = el.getBoundingClientRect();
+        const x = (rect.left - parentRect.left) + (edge === 'right' ? rect.width - 6 : 6);
+        const y = (rect.top - parentRect.top) + rect.height / 2;
+        return { x, y };
+    }
+}
+
+//concrete implementation curved bezier arrows
+class CurvedArrowRenderer extends ArrowRenderer
+{
+    draw(svg, fromEl, toEl, parentRect)
+    {
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const from = this._getCoords(fromEl, parentRect, 'right');
+        const to = this._getCoords(toEl, parentRect, 'left');
+
+        const dx = Math.max(20, Math.abs(to.x - from.x) / 2);
+        const cx1 = from.x + dx;
+        const cx2 = to.x - dx;
+
+        const path = document.createElementNS(svgNS, 'path');
+        const d = `M ${from.x} ${from.y} C ${cx1} ${from.y} ${cx2} ${to.y} ${to.x} ${to.y}`;
+        path.setAttribute('d', d);
+        path.setAttribute('stroke', '#000');
+        path.setAttribute('fill', 'none');
+        path.classList.add('arrow-line');
+        svg.appendChild(path);
+        return path;
+    }
+}
+
+//concrete implementation straight line arrows
+class StraightArrowRenderer extends ArrowRenderer
+{
+    draw(svg, fromEl, toEl, parentRect)
+    {
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const from = this._getCoords(fromEl, parentRect, 'right');
+        const to = this._getCoords(toEl, parentRect, 'left');
+
+        const path = document.createElementNS(svgNS, 'path');
+        const d = `M ${from.x} ${from.y} L ${to.x} ${to.y}`;
+        path.setAttribute('d', d);
+        path.setAttribute('stroke', '#000');
+        path.setAttribute('fill', 'none');
+        path.classList.add('arrow-line');
+        svg.appendChild(path);
+        return path;
+    }
+}
+
+//concrete implementation stepped arrows
+class SteppedArrowRenderer extends ArrowRenderer
+{
+    draw(svg, fromEl, toEl, parentRect)
+    {
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const from = this._getCoords(fromEl, parentRect, 'right');
+        const to = this._getCoords(toEl, parentRect, 'left');
+
+        const midX = (from.x + to.x) / 2;
+
+        const path = document.createElementNS(svgNS, 'path');
+        const d = `M ${from.x} ${from.y} L ${midX} ${from.y} L ${midX} ${to.y} L ${to.x} ${to.y}`;
+        path.setAttribute('d', d);
+        path.setAttribute('stroke', '#000');
+        path.setAttribute('fill', 'none');
+        path.classList.add('arrow-line');
+        svg.appendChild(path);
+        return path;
+    }
+}
+
+class GraphRenderer
+{
+    constructor(graphContainer)
+    {
         this.container = graphContainer;
         this.currentTasks = null;
         this.resizeTimeout = null;
+        
+        //dynamic binding arrow renderer selected at runtime
+        this.arrowRenderer = this._selectArrowRenderer();
         
         //add resize handler to redraw arrows
         window.addEventListener('resize', () => {
@@ -17,6 +103,14 @@ class GraphRenderer {
                 }
             }, 100);
         });
+    }
+
+    //runtime polymorphic selection of arrow rendering strategy
+    _selectArrowRenderer()
+    {
+        //always use curved arrows for smooth appearance
+        console.log('arrow renderer curved bezier selected');
+        return new CurvedArrowRenderer();
     }
 
     drawEmptyQuiz(tasks) {
@@ -76,34 +170,21 @@ class GraphRenderer {
             return { x, y };
         };
 
-        for (const taskId in tasks) {
+        //use polymorphic arrow renderer to draw connections
+        const parentRect = this.container.getBoundingClientRect();
+        for (const taskId in tasks)
+        {
             const task = tasks[taskId];
             const toEl = document.getElementById(`task-${task.id}`);
             if (!task.pred || task.pred.length === 0) continue;
-            for (const pred of task.pred) {
+            
+            for (const pred of task.pred)
+            {
                 const fromEl = document.getElementById(`task-${pred}`);
                 if (!fromEl) continue;
-                //compute edge endpoints right center of fromel to left center of toel
-                const rFrom = fromEl.getBoundingClientRect();
-                const rTo = toEl.getBoundingClientRect();
-                const parentRect = this.container.getBoundingClientRect();
-                const x1 = (rFrom.left - parentRect.left) + rFrom.width - 6; //right edge
-                const y1 = (rFrom.top - parentRect.top) + rFrom.height/2;
-                const x2 = (rTo.left - parentRect.left) + 6; //left edge
-                const y2 = (rTo.top - parentRect.top) + rTo.height/2;
-
-                //draw a curved path for nicer appearance
-                const dx = Math.max(20, Math.abs(x2 - x1) / 2);
-                const cx1 = x1 + dx;
-                const cx2 = x2 - dx;
-                const path = document.createElementNS(svgNS, 'path');
-                const d = `M ${x1} ${y1} C ${cx1} ${y1} ${cx2} ${y2} ${x2} ${y2}`;
-                path.setAttribute('d', d);
-                path.setAttribute('stroke', '#000');
-                path.setAttribute('fill', 'none');
-                path.classList.add('arrow-line');
-                //no marker end plain line without arrow tip
-                svg.appendChild(path);
+                
+                //dynamic dispatch to selected arrow renderer
+                this.arrowRenderer.draw(svg, fromEl, toEl, parentRect);
             }
         }
 
@@ -121,7 +202,8 @@ class GraphRenderer {
         }
     }
 
-    _redrawArrows(tasks) {
+    _redrawArrows(tasks)
+    {
         //find existing svg
         const svg = document.getElementById('arrow-svg');
         if (!svg) return;
@@ -130,34 +212,21 @@ class GraphRenderer {
         const paths = svg.querySelectorAll('path');
         paths.forEach(p => p.remove());
 
-        const svgNS = 'http://www.w3.org/2000/svg';
-
-        //redraw all arrows
-        for (const taskId in tasks) {
+        //redraw all arrows using polymorphic renderer
+        const parentRect = this.container.getBoundingClientRect();
+        for (const taskId in tasks)
+        {
             const task = tasks[taskId];
             const toEl = document.getElementById(`task-${task.id}`);
             if (!task.pred || task.pred.length === 0) continue;
-            for (const pred of task.pred) {
+            
+            for (const pred of task.pred)
+            {
                 const fromEl = document.getElementById(`task-${pred}`);
                 if (!fromEl) continue;
-                const rFrom = fromEl.getBoundingClientRect();
-                const rTo = toEl.getBoundingClientRect();
-                const parentRect = this.container.getBoundingClientRect();
-                const x1 = (rFrom.left - parentRect.left) + rFrom.width - 6;
-                const y1 = (rFrom.top - parentRect.top) + rFrom.height/2;
-                const x2 = (rTo.left - parentRect.left) + 6;
-                const y2 = (rTo.top - parentRect.top) + rTo.height/2;
-
-                const dx = Math.max(20, Math.abs(x2 - x1) / 2);
-                const cx1 = x1 + dx;
-                const cx2 = x2 - dx;
-                const path = document.createElementNS(svgNS, 'path');
-                const d = `M ${x1} ${y1} C ${cx1} ${y1} ${cx2} ${y2} ${x2} ${y2}`;
-                path.setAttribute('d', d);
-                path.setAttribute('stroke', '#000');
-                path.setAttribute('fill', 'none');
-                path.classList.add('arrow-line');
-                svg.appendChild(path);
+                
+                //dynamic dispatch to arrow renderer
+                this.arrowRenderer.draw(svg, fromEl, toEl, parentRect);
             }
         }
     }

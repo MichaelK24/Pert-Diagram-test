@@ -5,12 +5,11 @@
 
 (function(global)
 {
+	//generates random integer between min and max inclusive
 	function randInt(min,max)
 	{
 		return Math.floor(Math.random()*(max-min+1))+min;
-	}
-
-    //constant layouts for the possible chart types
+	}    //constant layouts for the possible chart types
 	const layouts=
 	[
 		{name:'classic',preds:{A:[],B:['A'],C:['A'],D:['B','C'],E:['D'],F:['D'],G:['E','F']},positions:{A:['5%','160px'],B:['22%','50px'],C:['22%','270px'],D:['40%','160px'],E:['58%','50px'],F:['58%','270px'],G:['76%','160px']}},
@@ -18,14 +17,13 @@
 		{name:'diamond',preds:{A:[],B:['A'],C:['A'],D:['C'],E:['B'],F:['D','E'],G:['F']},positions:{A:['5%','160px'],B:['22%','100px'],C:['22%','220px'],D:['40%','220px'],E:['40%','100px'],F:['58%','160px'],G:['76%','160px']}},
 		{name:'parallel',preds:{A:[],B:['A'],C:['B'],D:['A'],E:['D'],F:['E'],G:['C','F']},positions:{A:['3%','160px'],B:['20%','80px'],C:['36%','80px'],D:['20%','240px'],E:['36%','240px'],F:['52%','240px'],G:['72%','160px']}},
 		{name:'ladder',preds:{A:[],B:['A'],C:['A'],D:['B'],E:['C'],F:['D','E'],G:['F']},positions:{A:['2%','160px'],B:['16%','120px'],C:['16%','200px'],D:['30%','120px'],E:['30%','200px'],F:['50%','160px'],G:['72%','160px']}},
-		{name:'zigzag',preds:{A:[],B:['A'],C:['B'],D:['A'],E:['D','C'],F:['E'],G:['F']},positions:{A:['3%','160px'],B:['18%','120px'],C:['34%','120px'],D:['18%','200px'],E:['40%','160px'],F:['58%','160px'],G:['76%','160px']}},
+		{name:'zigzag',preds:{A:[],B:['A'],C:['B'],D:['A'],E:['C','D'],F:['E'],G:['F']},positions:{A:['3%','160px'],B:['20%','100px'],C:['38%','100px'],D:['20%','220px'],E:['56%','160px'],F:['72%','160px'],G:['88%','160px']}},
 		{name:'converge',preds:{A:[],B:['A'],C:['A'],D:['B'],E:['C'],F:['D','E'],G:['F']},positions:{A:['2%','160px'],B:['18%','100px'],C:['18%','220px'],D:['34%','100px'],E:['34%','220px'],F:['56%','160px'],G:['76%','160px']}},
 		{name:'complex',preds:{A:[],B:['A'],C:['B'],D:['B'],E:['C','D'],F:['E'],G:['F']},positions:{A:['2%','160px'],B:['16%','160px'],C:['30%','100px'],D:['30%','220px'],E:['46%','160px'],F:['62%','160px'],G:['78%','160px']}}
 	];
 
-	//preset length sets 10 sets of 7 numbers a to g
-	//these come from the csv file and will be used when generatelayout layoutindex setindex is called or when url contains set 1 to 10
-	//each inner array maps to a b c d e f g
+	//preset task durations for each of the 10 data sets
+	//each array has 7 numbers mapping to tasks a through g
 	const presetSets=
 	[
 		[4,8,2,1,5,6,10],   //set 1
@@ -40,13 +38,14 @@
 		[5,12,10,8,7,2,4]   //set 10
 	];
 
+	//creates a pert chart with specific layout pattern and duration set
 	function generateLayout(layoutIndex, setIndex)
 	{
-
-			//allow optional setindex 1 to 10 to select one of the predefined length sets
+		//pick which of the 10 duration sets to use
 		let chosenSet=undefined;
 		try
 		{
+				//use provided set number or check url params or pick random
 				if(typeof setIndex==='number' && setIndex>=1 && setIndex<=10)
 				{
 					chosenSet=setIndex-1;
@@ -61,7 +60,6 @@
 					}
 					else
 					{
-						//always pick one of the 10 preset data sets randomly if not specified
 						chosenSet=randInt(0,9);
 					}
 				}
@@ -72,17 +70,19 @@
 			chosenSet=randInt(0,9);
 		}
 
+		//pick layout pattern classic diamond parallel etc
 		const idx=(typeof layoutIndex==='number'&&layoutIndex>=1&&layoutIndex<=layouts.length)?layoutIndex-1:randInt(0,layouts.length-1);
 
 		const layout=layouts[idx];
 
 		const nodes=['A','B','C','D','E','F','G'];
 
+		//build task objects with durations and positions
 		const tasks={};
 
 		for(const n of nodes)
 		{
-			//always use preset length from the chosen set
+			//get duration from the preset data set
 			const map=presetSets[chosenSet];
 			const nodeIndex='ABCDEFG'.indexOf(n);
 			const len=(nodeIndex>=0 && map[nodeIndex]!=null) ? Number(map[nodeIndex]) : randInt(1,12);
@@ -92,6 +92,7 @@
 			tasks[n]={id:n,len:len,pred:(layout.preds[n]||[]).slice(),succ:[],x:pos[0],y:pos[1]};
 		}
 
+		//limit each task to max 2 outgoing arrows to keep diagram clean
 		const succCount={};
 
 		for(const n of nodes)
@@ -120,6 +121,7 @@
 			tasks[n].pred=filteredPreds;
 		}
 
+		//create compact string like a4b8c2 for matching answer keys
 		let compact='';
 
 		for(const n of nodes)
