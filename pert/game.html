@@ -11,14 +11,24 @@
                 background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.40)), url('michael/images/wqe.png') center/cover no-repeat fixed;
  
                 background-position: center 8%;
+
+            font-family: sans-serif;
+            margin: 0;
+            overflow: hidden;
             }
       
-            #app-container{background:rgba(255,255,255,0.02);}
+            #app-container{
+                background:rgba(255,255,255,0.02);
+                position: relative;
+            width: 100%;
+            height: 100vh;
+            }
         </style>
 </head> 
 <body>
 
     <div id="app-container">
+        <button id="audio-btn" class="audio-control">🔊 On</button>
         <img src="michael/images/logopng.png" alt="PERT Diagram" class="game-logo">
         <div id="graph-container"></div> 
         <div id="task-table">
@@ -36,6 +46,11 @@ G     6    E,F
         <div id="controls">
             <button id="check-btn">Check</button>
         </div>
+    </div>
+
+    <div id="feedback-overlay">
+        <div id="popup-box" class="popup-content">
+            </div>
     </div>
 
     <script src="michael/ChartGen.js"></script>

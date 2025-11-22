@@ -1,6 +1,9 @@
 //main js
 //michael king
 //handles quiz logic answer checking and csv loading
+/*
+[Ananda]: Implemented UIController interaction, Audio toggle logic, 
+ and the 'Check' button validation workflow.*/
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -85,6 +88,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             this.isTryMode=false; //false waiting for check true try again mode
             this.checkButton.addEventListener('click', () => this.onCheckClick());
+            // [Ananda] Initialize Sound and Animation Managers
+            this.soundManager = new SoundManager();
+            this.animationManager = new AnimationManager(this.soundManager);
+
+            // [Ananda] Setup Audio Toggle Button
+            this.audioButton = document.getElementById('audio-btn');
+            if (this.audioButton) {
+                this.audioButton.addEventListener('click', () => {
+                    const status = this.soundManager.toggleMute();
+                    this.audioButton.textContent = status;
+                });
+            }
             console.log("UIController initialized. App is running.");
         }
 
@@ -326,10 +341,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorSound.play().catch(e => console.warn('Could not play error sound', e));
             }
 
+            // [Ananda] Trigger Visual & Audio Feedback
+            if (allCorrect) {
+                console.log("All answers correct! Playing animation.");
+                // Trigger your success animation & sound
+                this.animationManager.playCriticalPathAnimation(correctAnswers);
+                this.soundManager.playSound('success_chime');
+            } else {
+                // Trigger your error animation (Dragon) & sound
+                this.animationManager.triggerError();
+                this.soundManager.playSound('error');
+            }
+
             //after a check toggle to try again mode so user can get a new random layout
             this.isTryMode=true;
             this.checkButton.textContent='Try Again';
         }
+        
     }
 
     (async () => {
