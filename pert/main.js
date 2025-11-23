@@ -65,9 +65,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function getUrlParam(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    }
+
     class UIController {
+        
         constructor() {
     
+
+            // BIGYAN: read mode/level from URL (start / practice / test)
+            this.mode = getUrlParam('mode') || 'start';
+            this.level = getUrlParam('level') || null;
+
             this.checkButton = document.getElementById('check-btn');
             this.graphContainer = document.getElementById('graph-container');
 
@@ -83,6 +94,34 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 this.taskData = {};
             }
+
+            if (gen && gen.tasks && typeof PertMathEngine !== 'undefined') {
+                try {
+                    const engine = PertMathEngine.getInstance();
+                    const mathResult = engine.computeTimes(gen.tasks);
+                    // For now, just log it so you can see it's working
+                    console.log('PertMathEngine computed times:', mathResult);
+
+                    // BIGYAN: Validate computed answers vs CSV key
+                    if (typeof KeyValidator !== 'undefined' && window.MichaelAnswerKey) {
+                        const keyInfo = this._findAnswerKeyForLayout(gen, window.MichaelAnswerKey);
+                        if (keyInfo && keyInfo.entry) {
+                            KeyValidator.validate(gen.tasks, keyInfo.entry);
+                        } else {
+                            console.warn('[KeyValidator] No matching answer key found for this layout.');
+                        }
+                    }
+
+                } catch (e) {
+                    console.error('Error running PertMathEngine:', e);
+                }
+            }
+            // BIGYAN: Start Test Mode timer when quiz is ready
+            if (this.mode === 'test' && typeof TestMode !== 'undefined') {
+                TestMode.startTimer();
+            }
+
+
 
             this.graphRenderer.drawEmptyQuiz(this.taskData);
 
@@ -169,6 +208,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.taskData = {};
                 }
                 this.graphRenderer.drawEmptyQuiz(this.taskData);
+
+
+                //Call my engiene
+
 
                 //flip mode back to check
                 this.isTryMode=false;
@@ -327,6 +370,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (taskCorrect) correctCount++;
                 if (!taskCorrect) allCorrect=false;
             }
+
+            // BIGYAN: Test Mode scoring based on tasks correct and time taken
+            if (this.mode === 'test' && typeof TestMode !== 'undefined') {
+                const elapsed = TestMode.stopTimer();
+                const totalCount = totalTasks;
+                const score = TestMode.calculateScore({
+                    correctCount: correctCount,
+                    totalCount: totalCount,
+                    timeSeconds: elapsed
+                });
+                const passed = TestMode.isPass(score);
+                TestMode.showResult({
+                    score,
+                    elapsed,
+                    correctCount,
+                    totalCount,
+                    passed
+                });
+            }
+
+
+
             
             if (allCorrect)
             {

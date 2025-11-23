@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnHard = document.getElementById('btn-hard');
   const learnSub = document.getElementById('learn-sub');
 
+  const btnTutorial = document.getElementById('btn-tutorial'); // NEW
+  const btnTest = document.getElementById('btn-test');         // NEW
+
+
   //start button navigates to main game page
   btnStart.addEventListener('click', () => {
     console.log('Starting game...');
@@ -32,6 +36,23 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Learn Mode: Hard selected');
     window.location.href = '../game.html?mode=learn&level=hard';
   });
+
+  // Tutorial Mode: go to Bigyan's tutorial page
+  if (btnTutorial) {
+    btnTutorial.addEventListener('click', () => {
+      console.log('Tutorial Mode selected');
+      window.location.href = '../bigyan/tutorial.html';
+    });
+  }
+
+  // Test Mode: go to game with test mode enabled
+  if (btnTest) {
+    btnTest.addEventListener('click', () => {
+      console.log('Test Mode selected');
+      window.location.href = '../game.html?mode=test';
+    });
+  }
+
 
   //rules button opens explanation panel
   const btnRules = document.getElementById('btn-rules');
