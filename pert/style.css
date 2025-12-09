@@ -309,6 +309,15 @@ body
     box-shadow: 0 0 15px rgba(220, 53, 69, 0.7);
 }
 
+/* [Sasha] Home Button */
+.home-control {
+    position: absolute;
+    top: 20px; left: 20px;
+    background: rgba(0,0,0,0.2); color: white;
+    border: 1px solid white; padding: 5px 10px;
+    border-radius: 15px; cursor: pointer; z-index: 1000;
+}
+
 /* [Ananda] Audio Button */
 .audio-control {
     position: absolute;
