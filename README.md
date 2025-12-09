@@ -4,7 +4,8 @@ Team: Special Force Pert Chart logo
 
 Pert Chart Simulator: Readme
 
-Build Version: 1.0 Engine: JavaScript (ES6), HTML5, CSS3
+Build Version: 1.0 Engine: JavaScript (ES2019+), HTML5, CSS3
+  Supported browsers: Chrome 74+, Edge 79+, Safari (iOS) 14.8+, Firefox 90+
 
 Download Instructions:
 
