@@ -14,8 +14,8 @@ Live Link: [pertchartgame.netlify.app](https://pertchartgame.netlify.app/)
 
 Building a local version of the game:
  * Setup a localhost web server.
- * Make sure the files are organized like: http-root/Pert/Pert-Diagram-test
- * Open the index.html file in your web browser.
+ * Make sure the files are organized like: `http-root/Pert/Pert-Diagram-test`
+ * Open `http://127.0.0.1/Pert/Pert-Diagram-test/pert/index.html` in your web browser.
 
 Running the Game:
 
