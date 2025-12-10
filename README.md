@@ -10,11 +10,12 @@ Download Instructions:
 
 No download is required. The project is hosted live on the web.
 
-Live Link: pertchartgame.netlify.app
+Live Link: [pertchartgame.netlify.app](https://clinquant-baklava-53792d.netlify.app/michael/mainmenu.html)
 
 Running the Game:
 
 Open the Netlify link in any modern web browser (Chrome, Firefox, Safari, Edge).
+
 
 System Requirements:
 
