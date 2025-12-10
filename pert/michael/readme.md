@@ -96,7 +96,7 @@ dont change the compact string format in chartgen or answer matching breaks. don
 ### chartgen.js prefabs
 
 **generateLayout(layoutIndex, setIndex)**
-returns object with tasks compact layoutname setindex layoutindex. layoutindex 1 to 8 picks which pattern. setindex 1 to 10 picks which duration set. leave both empty for random selection
+returns object   with tasks compact layoutname setindex layoutindex. layoutindex 1 to 8 picks which pattern. setindex 1 to 10 picks which duration set. leave both empty for random selection
 
 **layouts array**
 holds 8 preset chart patterns each has name preds positions. preds defines predecessor relationships. positions sets xy coords for each node

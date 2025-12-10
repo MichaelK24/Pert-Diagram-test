@@ -52,19 +52,76 @@ body {
     
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-rows: auto 1fr auto;
+    box-sizing: border-box;
+    padding: 6px;
 }
 
 .pert-node div {
-    display: grid;
-    place-items: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 11px;
+    padding: 2px;
+    overflow: hidden;
 }
+
+.pert-node .es {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+}
+
+.pert-node .dur {
+    grid-column: 2;
+    grid-row: 1;
+    font-weight: 700;
+    align-self: start;
+}
+
+.pert-node .ef {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: start;
+}
+
 .pert-node .task-name {
     grid-column: 1 / -1;
     grid-row: 2;
     font-size: 24px;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+}
+
+.pert-node .ls {
+    grid-column: 1;
+    grid-row: 3;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    align-self: end;
+}
+
+.pert-node .slack {
+    grid-column: 2;
+    grid-row: 3;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    align-self: end;
+}
+
+.pert-node .lf {
+    grid-column: 3;
+    grid-row: 3;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    align-self: end;
 }
 
 .pert-node input {

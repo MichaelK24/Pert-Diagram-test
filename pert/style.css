@@ -120,8 +120,9 @@ body
     color: white;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-rows: auto 1fr auto;
     box-sizing: border-box;
+    gap: 2px;
 }
 
 .pert-node div
@@ -135,12 +136,61 @@ body
     overflow: visible;
 }
 
+.pert-node .es
+{
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.pert-node .dur
+{
+    grid-column: 2;
+    grid-row: 1;
+    font-weight: 700;
+}
+
+.pert-node .ef
+{
+    grid-column: 3;
+    grid-row: 1;
+}
+
 .pert-node .task-name
 {
     grid-column: 1 / -1;
     grid-row: 2;
     font-size: clamp(22px, 2.5vw, 32px);
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pert-node .ls
+{
+    grid-column: 1;
+    grid-row: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pert-node .slack
+{
+    grid-column: 2;
+    grid-row: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pert-node .lf
+{
+    grid-column: 3;
+    grid-row: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pert-node input
@@ -191,6 +241,42 @@ body
     white-space: nowrap;
     z-index: 10;
     pointer-events: none;
+}
+
+/* tutorial mode scaling - smaller nodes to prevent overlap */
+body:has(#tutorial-panel) .pert-node
+{
+    width: clamp(100px, 10vw, 130px);
+    height: clamp(80px, 10vh, 110px);
+    padding: 4px;
+}
+
+body:has(#tutorial-panel) .pert-node .task-name
+{
+    font-size: clamp(16px, 1.8vw, 20px);
+}
+
+body:has(#tutorial-panel) .pert-node div
+{
+    font-size: clamp(8px, 0.8vw, 10px);
+    padding: 1px;
+}
+
+body:has(#tutorial-panel) .pert-node input
+{
+    width: clamp(20px, 2vw, 26px);
+    height: clamp(12px, 1.2vh, 16px);
+    font-size: clamp(8px, 0.8vw, 10px);
+}
+
+body:has(#tutorial-panel) .pert-node .es::before,
+body:has(#tutorial-panel) .pert-node .dur::before,
+body:has(#tutorial-panel) .pert-node .ef::before,
+body:has(#tutorial-panel) .pert-node .ls::before,
+body:has(#tutorial-panel) .pert-node .slack::before,
+body:has(#tutorial-panel) .pert-node .lf::before
+{
+    font-size: clamp(7px, 0.7vw, 9px);
 }
 
 @media (max-width: 768px)
@@ -276,31 +362,43 @@ body
 .pert-node .es::before
 {
     content: 'ES: ';
+    font-size: clamp(9px, 1vw, 12px);
+    margin-right: 2px;
 }
 
 .pert-node .dur::before
 {
     content: 'Dur: ';
+    font-size: clamp(9px, 1vw, 12px);
+    margin-right: 2px;
 }
 
 .pert-node .ef::before
 {
     content: 'EF: ';
+    font-size: clamp(9px, 1vw, 12px);
+    margin-right: 2px;
 }
 
 .pert-node .ls::before
 {
     content: 'LS: ';
+    font-size: clamp(9px, 1vw, 12px);
+    margin-right: 2px;
 }
 
 .pert-node .slack::before
 {
     content: 'Slack: ';
+    font-size: clamp(9px, 1vw, 12px);
+    margin-right: 2px;
 }
 
 .pert-node .lf::before
 {
     content: 'LF: ';
+    font-size: clamp(9px, 1vw, 12px);
+    margin-right: 2px;
 }
 
 .pert-node.critical-highlight

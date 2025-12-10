@@ -192,13 +192,13 @@ class GraphRenderer
             nodeElement.style.top = task.y;
 
             nodeElement.innerHTML = `
-                <div class="es"><input type="text" id="task-${task.id}-es"></div>
+                <div class="es"><input type="text" id="task-${task.id}-es" placeholder="ES"></div>
                 <div class="dur">${task.len}</div>
-                <div class="ef"><input type="text" id="task-${task.id}-ef"></div>
+                <div class="ef"><input type="text" id="task-${task.id}-ef" placeholder="EF"></div>
                 <div class="task-name">${task.id}</div>
-                <div class="ls"><input type="text" id="task-${task.id}-ls"></div>
-                <div class="slack"><input type="text" id="task-${task.id}-slack"></div>
-                <div class="lf"><input type="text" id="task-${task.id}-lf"></div>
+                <div class="ls"><input type="text" id="task-${task.id}-ls" placeholder="LS"></div>
+                <div class="slack"><input type="text" id="task-${task.id}-slack" placeholder="Slack"></div>
+                <div class="lf"><input type="text" id="task-${task.id}-lf" placeholder="LF"></div>
             `;
             this.container.appendChild(nodeElement);
         }
