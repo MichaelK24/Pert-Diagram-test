@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const btnTutorial = document.getElementById('btn-tutorial'); // NEW
   const btnTest = document.getElementById('btn-test');         // NEW
+  const btnAbout = document.getElementById('btn-about');       // NEW
 
 
   //start button navigates to main game page
@@ -52,6 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = '../game.html?mode=test';
     });
   }
+
+  // About: show info about project
+  if (btnAbout) {
+    btnAbout.addEventListener('click', () => {
+      console.log('About Button Selected');
+      document.getElementById("about-overlay").style.display = "block";
+    });
+  }
+  document.getElementById("btn-about-close").onclick = () => {
+      document.getElementById("about-overlay").style.display = "none";
+  };
 
 
   //rules button opens explanation panel
