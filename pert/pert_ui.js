@@ -55,14 +55,14 @@ class GraphRenderer {
             nodeElement.style.top = task.y;
 
             nodeElement.innerHTML = `
-                <div class="es"><input type="text" id="task-${task.id}-es"></div>
+                <div class="es"><input type="text" pattern="[0-9]*" placeholder="0" id="task-${task.id}-es"></div>
                 <div class="dur">${task.len}</div>
-                <div class="ef"><input type="text" id="task-${task.id}-ef"></div>
+                <div class="ef"><input type="text" pattern="[0-9]*" placeholder="0" id="task-${task.id}-ef"></div>
                 <div class="task-name">${task.id}</div>
-                <div class="ls"><input type="text" id="task-${task.id}-ls"></div>
-                <div class="slack"><input type="text" id="task-${task.id}-slack"></div>
-                <div class="lf"><input type="text" id="task-${task.id}-lf"></div>
-            `;
+                <div class="ls"><input type="text" pattern="[0-9]*" placeholder="0" id="task-${task.id}-ls"></div>
+                <div class="slack"><input type="text" pattern="[0-9]*" placeholder="0" id="task-${task.id}-slack"></div>
+                <div class="lf"><input type="text" pattern="[0-9]*" placeholder="0" id="task-${task.id}-lf"></div>
+            `.replace(/\n\s*/g, '');
             this.container.appendChild(nodeElement);
         }
 

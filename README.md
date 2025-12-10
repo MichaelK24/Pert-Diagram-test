@@ -4,13 +4,20 @@ Team: Special Force Pert Chart logo
 
 Pert Chart Simulator: Readme
 
-Build Version: 1.0 Engine: JavaScript (ES6), HTML5, CSS3
+Build Version: 1.0 Engine: JavaScript (ES2019+), HTML5, CSS3
+
+Supported browsers: Chrome 74+, Edge 79+, Safari (iOS) 14.8+, Firefox 90+
 
 Download Instructions:
 
 No download is required. The project is hosted live on the web.
 
-Live Link: pertchartgame.netlify.app
+Live Link: [pertchartgame.netlify.app](https://pertchartgame.netlify.app/)
+
+Building a local version of the game:
+ * Setup a localhost web server.
+ * Make sure the files are organized like: `http-root/Pert/Pert-Diagram-test`
+ * Open `http://127.0.0.1/Pert/Pert-Diagram-test/pert/index.html` in your web browser.
 
 Running the Game:
 

@@ -1,3 +1,9 @@
+:root{
+  --after-position:  -13px;
+  --before-position: -30px;
+  --pert-node-height: clamp(140px, 16vh, 190px);
+}
+
 body
 {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -113,14 +119,13 @@ body
 {
     position: absolute;
     width: clamp(160px, 15vw, 220px);
-    height: clamp(140px, 16vh, 190px);
+    height: var(--pert-node-height);
     background-color: #37ABA9;
     border: 3px solid #2a8e8c;
     border-radius: 6px;
     color: white;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
     box-sizing: border-box;
 }
 
@@ -133,20 +138,22 @@ body
     font-size: clamp(10px, 1.1vw, 13px);
     padding: 2px;
     overflow: visible;
+    width: 30%;
+    flex-grow: 1;
 }
 
 .pert-node .task-name
 {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    font-size: clamp(22px, 2.5vw, 32px);
+    font-size: clamp(20px, 2.2vw, 26px);
     font-weight: 700;
+    width: 100%;
+    line-height: calc(0.4 * var(--pert-node-height));
 }
 
 .pert-node input
 {
-    width: clamp(28px, 2.8vw, 38px);
-    height: clamp(16px, 1.8vh, 22px);
+    width: 100%;
+    height: 100%;
     border: 2px solid #2a8e8c;
     background-color: #f0f8ff;
     color: #333;
@@ -155,8 +162,6 @@ body
     border-radius: 4px;
     font-size: clamp(10px, 1.1vw, 13px);
     box-sizing: border-box;
-    max-width: 85%;
-    max-height: 85%;
 }
 
 .pert-node input:focus
@@ -273,40 +278,117 @@ body
     }
 }
 
+.pert-node > *::after
+{
+    position: absolute;
+    line-height: 15px;
+    text-align: center;
+}
+.pert-node > *::before
+{
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 300ms ease-in-out;
+    background: #0009;
+    border-radius: 3px;
+    padding: 0 6px;
+    line-height: 30px;
+    text-align: center;
+    z-index: 10;
+    text-wrap: nowrap;
+}
+.pert-node > *:hover::before,
+.pert-node > *:has(input:focus)::before
+{
+    opacity: 1;
+}
+
 .pert-node .es::before
 {
-    content: 'ES: ';
+    content: 'Early Start';
+    top: var(--before-position);
 }
 
 .pert-node .dur::before
 {
-    content: 'Dur: ';
+    content: 'Duration';
+    top: var(--before-position);
 }
 
 .pert-node .ef::before
 {
-    content: 'EF: ';
+    content: 'Early Finish';
+    top: var(--before-position);
 }
 
 .pert-node .ls::before
 {
-    content: 'LS: ';
+    content: 'Late Start';
+    bottom: var(--before-position);
 }
 
 .pert-node .slack::before
 {
-    content: 'Slack: ';
+    content: 'Slack Time';
+    bottom: var(--before-position);
 }
 
 .pert-node .lf::before
 {
-    content: 'LF: ';
+    content: 'Late Finish';
+    bottom: var(--before-position);
+}
+
+.pert-node .es::after
+{
+    content: 'ES';
+    bottom: var(--after-position);
+}
+
+.pert-node .dur::after
+{
+    content: 'Dur';
+    bottom: var(--after-position);
+}
+
+.pert-node .ef::after
+{
+    content: 'EF';
+    bottom: var(--after-position);
+}
+
+.pert-node .ls::after
+{
+    content: 'LS';
+    top: var(--after-position);
+}
+
+.pert-node .slack::after
+{
+    content: 'Slack';
+    top: var(--after-position);
+}
+
+.pert-node .lf::after
+{
+    content: 'LF';
+    top: var(--after-position);
 }
 
 .pert-node.critical-highlight
 {
     border: 4px solid #dc3545;
     box-shadow: 0 0 15px rgba(220, 53, 69, 0.7);
+}
+
+/* [Sasha] Home Button */
+.home-control {
+    position: absolute;
+    top: 20px; left: 20px;
+    background: rgba(0,0,0,0.2); color: white;
+    border: 1px solid white; padding: 5px 10px;
+    border-radius: 15px; cursor: pointer; z-index: 1000;
 }
 
 /* [Ananda] Audio Button */
