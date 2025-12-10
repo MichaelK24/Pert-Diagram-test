@@ -283,22 +283,34 @@ body:has(#tutorial-panel) .pert-node .lf::before
 {
     .pert-node
     {
-        width: 130px;
-        height: 100px;
+        width: 90px;
+        height: 70px;
+        padding: 2px;
     }
     .pert-node div
     {
-        font-size: 9px;
+        font-size: 7px;
+        padding: 1px;
     }
     .pert-node .task-name
     {
-        font-size: 20px;
+        font-size: 14px;
     }
     .pert-node input
     {
-        width: 30px;
-        height: 18px;
-        font-size: 11px;
+        width: 22px;
+        height: 14px;
+        font-size: 8px;
+    }
+    .pert-node .es::before,
+    .pert-node .dur::before,
+    .pert-node .ef::before,
+    .pert-node .ls::before,
+    .pert-node .slack::before,
+    .pert-node .lf::before
+    {
+        font-size: 6px;
+        margin-right: 1px;
     }
     #task-table
     {
@@ -319,23 +331,35 @@ body:has(#tutorial-panel) .pert-node .lf::before
 {
     .pert-node
     {
-        width: 110px;
-        height: 85px;
+        width: 70px;
+        height: 55px;
+        padding: 1px;
     }
     .pert-node div
     {
-        font-size: 8px;
-        padding: 1px;
+        font-size: 6px;
+        padding: 0px;
     }
     .pert-node .task-name
     {
-        font-size: 17px;
+        font-size: 12px;
     }
     .pert-node input
     {
-        width: 26px;
-        height: 16px;
-        font-size: 10px;
+        width: 18px;
+        height: 12px;
+        font-size: 7px;
+        border-width: 1px;
+    }
+    .pert-node .es::before,
+    .pert-node .dur::before,
+    .pert-node .ef::before,
+    .pert-node .ls::before,
+    .pert-node .slack::before,
+    .pert-node .lf::before
+    {
+        font-size: 5px;
+        margin-right: 0px;
     }
     #task-table
     {
@@ -355,7 +379,7 @@ body:has(#tutorial-panel) .pert-node .lf::before
     }
     .pert-arrows path
     {
-        stroke-width: 2px;
+        stroke-width: 1.5px;
     }
 }
 
