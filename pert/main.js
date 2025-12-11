@@ -7,57 +7,59 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    //load authoritative answers from the csv file if present and merge into window michaelanswer key using the same structure the grader expects
+    //load authoritative answers from the csv file if present and build a dictionary keyed by layout and dataset
+    //so we can map to computed answers
     async function loadCSVAnswerKey() {
         try {
             const resp = await fetch('michael/PERTkey.csv');
             if (!resp.ok) return;
             const text = await resp.text();
             const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l.length>0);
-            if (lines.length === 0) return;
-            const header = lines[0].split(',').map(h=>h.trim());
-            const idx = (col) => header.indexOf(col);
-            const layoutI = idx('Layout');
-            const setI = idx('Set');
-            const taskI = idx('Task');
-            const durI = idx('Duration');
-            const esI = idx('ES');
-            const efI = idx('EF');
-            const lsI = idx('LS');
-            const lfI = idx('LF');
-            const slackI = idx('Slack');
+            //expected columns
+            //layoutname, datasetindex, task, duration, ES, EF, LS, LF, slack
+            const keyStore={};
+            const header=lines[0].split(',');
+            //find indices
+            const layoutIdx=header.indexOf('layoutname');
+            const setIdx=header.indexOf('dataset');
+            const taskIdx=header.indexOf('task');
+            const durIdx=header.indexOf('len');
+            const esIdx=header.indexOf('ES');
+            const efIdx=header.indexOf('EF');
+            const lsIdx=header.indexOf('LS');
+            const lfIdx=header.indexOf('LF');
+            const slackIdx=header.indexOf('slack');
 
-            window.MichaelAnswerKey = window.MichaelAnswerKey || {};
+            function parseNum(x) {
+                if (x == null || x === '') return null;
+                const n = Number(x);
+                return Number.isNaN(n) ? null : n;
+            }
 
-            for (let i = 1; i < lines.length; i++) {
-                const cols = lines[i].split(',').map(c=>c.trim());
-                if (cols.length < 3) continue;
-                const layout = cols[layoutI] || '';
-                const setnum = cols[setI] || '';
-                const task = (cols[taskI] || '').toUpperCase();
-                if (!layout || !setnum || !task) continue;
+            for (let i=1;i<lines.length;i++) {
+                const cols=lines[i].split(',');
+                if (cols.length<header.length) continue;
+                const layout=cols[layoutIdx];
+                const dataset=cols[setIdx];
+                const task=cols[taskIdx];
+                if (!layout || !dataset || !task) continue;
+                const keyName=layout + 'data' + dataset;
+                if (!keyStore[keyName]) keyStore[keyName]={};
+                if (!keyStore[keyName][task]) keyStore[keyName][task]={};
+                const entry = keyStore[keyName][task];
+                const durI = durIdx >= 0 ? cols[durIdx] : '';
+                const esI  = esIdx  >= 0 ? cols[esIdx]  : '';
+                const efI  = efIdx  >= 0 ? cols[efIdx]  : '';
+                const lsI  = lsIdx  >= 0 ? cols[lsIdx]  : '';
+                const lfI  = lfIdx  >= 0 ? cols[lfIdx]  : '';
+                const slackI = slackIdx >= 0 ? cols[slackIdx] : '';
 
-                const keyName = `${layout}data${setnum}`;
-                if (!window.MichaelAnswerKey[keyName]) window.MichaelAnswerKey[keyName] = {};
-                const entry = window.MichaelAnswerKey[keyName];
-                //ensure task object exists
-                if (!entry[task]) entry[task] = { len: null, es: null, ef: null, ls: null, lf: null, slack: null };
-
-                //parse numeric values where possible
-                const parseNum = (j) => {
-                    if (j < 0 || j >= cols.length) return null;
-                    const v = cols[j];
-                    if (v === undefined || v === '') return null;
-                    const n = Number(v);
-                    return Number.isNaN(n) ? v : n;
-                };
-
-                entry[task].len = parseNum(durI);
-                entry[task].es = parseNum(esI);
-                entry[task].ef = parseNum(efI);
-                entry[task].ls = parseNum(lsI);
-                entry[task].lf = parseNum(lfI);
-                entry[task].slack = parseNum(slackI);
+                entry.len = parseNum(durI);
+                entry.es = parseNum(esI);
+                entry.ef = parseNum(efI);
+                entry.ls = parseNum(lsI);
+                entry.lf = parseNum(lfI);
+                entry.slack = parseNum(slackI);
             }
             console.log('CSV answer key loaded, entries:', Object.keys(window.MichaelAnswerKey).length);
         } catch (e) {
@@ -87,7 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
             this.graphRenderer = new GraphRenderer(this.graphContainer);
 
             //obtain initial layout via chartgen if available
-            let gen = (typeof window.generateLayout === 'function') ? window.generateLayout() : (window.lastGeneratedLayout || null);
+            let gen = (typeof window.generateLayout === 'function')
+                ? window.generateLayout()
+                : (window.lastGeneratedLayout || null);
             if (gen && gen.tasks) {
                 window.lastGeneratedLayout = gen;
                 this.taskData = gen.tasks;
@@ -142,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("UIController initialized. App is running.");
         }
 
-        //find the best matching answer key entry for a generated layout
+        //helper to find best match in keyStore for this layout and dataset combination
         _findAnswerKeyForLayout(gen, keyStore) {
             //prefer direct index naming layoutname data setindex
             try {
@@ -186,6 +190,48 @@ document.addEventListener('DOMContentLoaded', () => {
             return null;
         }
 
+        /**
+         * BIGYAN (Test Mode): Render a simple ES/EF/LS/LF/Slack answer table
+         * inside the existing #task-table container so students can review
+         * the correct values after submitting in Test Mode.
+         */
+        _renderAnswerTable(correctAnswers, fieldsToCheck) {
+            if (!correctAnswers) return;
+            const container = document.getElementById('task-table');
+            if (!container) return;
+
+            const ids = Object.keys(correctAnswers || {});
+            if (!ids.length) return;
+
+            // Simple HTML table; we rely on default styling from the page.
+            let html = '<h3 style="margin-top:8px;">Correct Answers (Test Mode)</h3>';
+            html += '<table class="pert-answer-table"><thead><tr>';
+            html += '<th>Task</th>';
+            html += '<th>len</th>';
+
+            (fieldsToCheck || []).forEach(f => {
+                const label = f.toUpperCase();
+                html += `<th>${label}</th>`;
+            });
+
+            html += '</tr></thead><tbody>';
+
+            ids.sort().forEach(id => {
+                const t = correctAnswers[id] || {};
+                html += '<tr>';
+                html += `<td>${id}</td>`;
+                html += `<td>${t.len != null ? t.len : ''}</td>`;
+                (fieldsToCheck || []).forEach(f => {
+                    const v = t[f];
+                    html += `<td>${v != null ? v : ''}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
         onCheckClick() {
             //if currently in try again mode reset the quiz with a new layout
             if (this.isTryMode) {
@@ -197,7 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 //generate new layout via chartgen and rerender
                 try {
-                    const gen2 = (typeof window.generateLayout === 'function') ? window.generateLayout() : (window.lastGeneratedLayout || null);
+                    const gen2 = (typeof window.generateLayout === 'function')
+                        ? window.generateLayout()
+                        : (window.lastGeneratedLayout || null);
                     if (gen2 && gen2.tasks) {
                         window.lastGeneratedLayout = gen2;
                         this.taskData = gen2.tasks;
@@ -231,50 +279,76 @@ document.addEventListener('DOMContentLoaded', () => {
             //find the right key entry
             try
             {
-                const keyStore=window.MichaelAnswerKey;
-                const gen=window.lastGeneratedLayout || {};
-                if (keyStore && gen && (gen.layoutName || gen.setIndex))
+                if (typeof window.MichaelAnswerKey === 'object')
                 {
-                    const found=this._findAnswerKeyForLayout(gen, keyStore);
-                    if (found)
+                    const keyStore=window.MichaelAnswerKey;
+                    const gen = window.lastGeneratedLayout || null;
+
+                    if (keyStore && gen && (gen.layoutName || gen.setIndex))
                     {
-                        console.log('Answer key matched:', found.keyName, '(Layout:', gen.layoutName, 'Set:', gen.setIndex + ')');
-                        //map the stored key object to the same shape used by grader
-                        const mapped={};
-                        for (const tid of Object.keys(found.entry))
+                        const found=this._findAnswerKeyForLayout(gen, keyStore);
+                        if (found)
                         {
-                            const src=found.entry[tid];
-                            mapped[tid]=
+                            console.log('Answer key matched:', found.keyName, '(Layout:', gen.layoutName, 'Set:', gen.setIndex + ')');
+                            //map the stored key object to the same shape used by grader
+                            const mapped={};
+                            for (const tid of Object.keys(found.entry))
                             {
-                                id:tid,
-                                len:src.len!=null ? Number(src.len) : (correctAnswers[tid] && correctAnswers[tid].len),
-                                es:src.es!=null ? Number(src.es) : (correctAnswers[tid] && correctAnswers[tid].es),
-                                ef:src.ef!=null ? Number(src.ef) : (correctAnswers[tid] && correctAnswers[tid].ef),
-                                ls:src.ls!=null ? Number(src.ls) : (correctAnswers[tid] && correctAnswers[tid].ls),
-                                lf:src.lf!=null ? Number(src.lf) : (correctAnswers[tid] && correctAnswers[tid].lf),
-                                slack:src.slack!=null ? Number(src.slack) : (correctAnswers[tid] && correctAnswers[tid].slack),
-                                pred:(correctAnswers[tid] && correctAnswers[tid].pred) || [],
-                                succ:(correctAnswers[tid] && correctAnswers[tid].succ) || []
-                            };
+                                const src=found.entry[tid];
+                                mapped[tid]=
+                                {
+                                    id:tid,
+                                    len:src.len!=null ? Number(src.len) : (correctAnswers[tid] && correctAnswers[tid].len),
+                                    es:src.es!=null ? Number(src.es) : (correctAnswers[tid] && correctAnswers[tid].es),
+                                    ef:src.ef!=null ? Number(src.ef) : (correctAnswers[tid] && correctAnswers[tid].ef),
+                                    ls:src.ls!=null ? Number(src.ls) : (correctAnswers[tid] && correctAnswers[tid].ls),
+                                    lf:src.lf!=null ? Number(src.lf) : (correctAnswers[tid] && correctAnswers[tid].lf),
+                                    slack:src.slack!=null ? Number(src.slack) : (correctAnswers[tid] && correctAnswers[tid].slack),
+                                    pred:(correctAnswers[tid] && correctAnswers[tid].pred) || [],
+                                    succ:(correctAnswers[tid] && correctAnswers[tid].succ) || []
+                                };
+                            }
+                            //use the key as the authoritative correctanswers for grading
+                            correctAnswers=mapped;
                         }
-                        //use the key as the authoritative correctanswers for grading
-                        correctAnswers=mapped;
-                    }
-                    else
-                    {
-                            console.log('No matching answer key entry found for this layout.');
+                        else
+                        {
+                                console.log('No matching answer key entry found for this layout.');
+                            }
                         }
-                    }
+                }
             }
             catch (e)
             {
-                console.warn('Answer key lookup failed', e);
+                console.warn('Error using CSV answer key', e);
             }
-            
+
+            //if not yet computed then compute using engine
+            if (!correctAnswers || Object.keys(correctAnswers).length===0)
+            {
+                if (typeof PertMathEngine !== 'undefined')
+                {
+                    try
+                    {
+                        const engine = PertMathEngine.getInstance();
+                        const mathResult = engine.computeTimes(this.taskData || {});
+                        correctAnswers = mathResult.tasks || {};
+                    }
+                    catch (e) {
+                        console.error('Error computing answers', e);
+                        correctAnswers={};
+                    }
+                }
+            }
+
             let allCorrect=true;
-            let correctCount=0; //per task correct
-            let blankCount=0; //per task blank any field blank
-            let totalTasks=0;
+            let correctCount=0; // per-task completely correct
+            let blankCount=0;  // per-task with any field blank
+            let totalTasks=0;  // number of tasks
+
+            // BIGYAN (Test Mode): field-level counters so partial answers get partial credit
+            let fieldCorrectCount = 0; // number of individual fields correct
+            let fieldTotalCount   = 0; // total number of fields checked
 
             //full field grading check es ef ls lf slack
             const fieldsToCkeck=['es','ef','ls','lf','slack'];
@@ -289,6 +363,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 for (const field of fieldsToCkeck)
                 {
+                    // Track every field that we grade (for Test Mode scoring)
+                    fieldTotalCount++;
                     const val=(userAnswers[field] || '').toString().trim();
                     const expected=task[field];
                     const numVal=val===''?0:Number(val);
@@ -296,6 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     {
                         if (numVal===Number(expected))
                         {
+                            // This field is correct
+                            fieldCorrectCount++;
                             this.graphRenderer.showFeedback(taskId, field, true);
                             //remove any expected hint
                             const inp=document.getElementById(`task-${taskId}-${field}`);
@@ -325,13 +403,19 @@ document.addEventListener('DOMContentLoaded', () => {
                                     hint.textContent=`→ ${expected}`;
                                 }
                             }
-                            catch (e) { }
+                            catch (e) { /*ignore*/ }
+                        }
+                        if (val==='')
+                        {
+                            taskBlank=true;
                         }
                     }
                     else
                     {
                         if (val==expected)
                         {
+                            // This field is correct (non-numeric comparison)
+                            fieldCorrectCount++;
                             this.graphRenderer.showFeedback(taskId, field, true);
                             const inp=document.getElementById(`task-${taskId}-${field}`);
                             if (inp)
@@ -361,6 +445,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                             catch (e) { /*ignore*/ }
                         }
+                        if (val==='')
+                        {
+                            taskBlank=true;
+                        }
                     }
                 }
 
@@ -371,12 +459,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!taskCorrect) allCorrect=false;
             }
 
-            // BIGYAN: Test Mode scoring based on tasks correct and time taken
+            // BIGYAN: Test Mode scoring based on *fields* correct and time taken
             if (this.mode === 'test' && typeof TestMode !== 'undefined') {
                 const elapsed = TestMode.stopTimer();
-                const totalCount = totalTasks;
+
+                // Use fine-grained field-level accuracy for scoring in Test Mode
+                const totalCount = fieldTotalCount;
                 const score = TestMode.calculateScore({
-                    correctCount: correctCount,
+                    correctCount: fieldCorrectCount,
                     totalCount: totalCount,
                     timeSeconds: elapsed
                 });
@@ -384,16 +474,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 TestMode.showResult({
                     score,
                     elapsed,
-                    correctCount,
-                    totalCount,
+                    correctCount: fieldCorrectCount,
+                    totalCount: totalCount,
                     passed
                 });
+
+                // Additionally, display a table of correct answers for review in Test Mode
+                this._renderAnswerTable(correctAnswers, fieldsToCkeck);
             }
 
 
 
             
-            if (allCorrect)
+            // Visual & audio feedback (game mode only; animations are skipped in Test Mode)
+            if (this.mode !== 'test') {
+if (allCorrect)
             {
                 console.log("All answers correct! Playing animation.");
                 this.animationManager.playCriticalPathAnimation(correctAnswers);
@@ -418,7 +513,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.soundManager.playSound('error');
             }
 
-            //after a check toggle to try again mode so user can get a new random layout
+            
+            }
+//after a check toggle to try again mode so user can get a new random layout
             this.isTryMode=true;
             this.checkButton.textContent='Try Again';
         }
