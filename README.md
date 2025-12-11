@@ -25,4 +25,4 @@ Hardware: Any device with a web browser and an internet connection.
 
 QR Code:
 
-<img width="3000" height="3000" alt="frame" src="https://github.com/user-attachments/assets/402b6ad5-ae86-4f6a-b6cc-1c5f7b5dc332" />
+<img width="1113" height="1113" alt="qr-code" src="https://github.com/user-attachments/assets/85e9a62f-914e-41a7-b5e5-c8516903014e" />
