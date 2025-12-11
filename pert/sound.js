@@ -35,7 +35,18 @@ class SoundManager {
             this.bgMusic.pause();
             return "🔇 Off";
         } else {
-            this.bgMusic.play().catch(e => console.log("Playback failed", e));
+            // Try to play, and handle potential errors
+            const playPromise = this.bgMusic.play();
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log("Audio unmuted and playing.");
+                    })
+                    .catch(error => {
+                        console.log("Could not play audio:", error);
+                        // If play fails, we're still unmuted (user can try again)
+                    });
+            }
             return "🔊 On";
         }
     }

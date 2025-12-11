@@ -127,17 +127,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             this.isTryMode=false; //false waiting for check true try again mode
             this.checkButton.addEventListener('click', () => this.onCheckClick());
-            // [Ananda] Initialize Sound and Animation Managers
-            this.soundManager = new SoundManager();
-            this.animationManager = new AnimationManager(this.soundManager);
-
             // [Ananda] Setup Audio Toggle Button
             this.audioButton = document.getElementById('audio-btn');
             if (this.audioButton) {
                 this.audioButton.addEventListener('click', () => {
+                    console.log("Audio button clicked, current mute state:", this.soundManager.isMuted);
                     const status = this.soundManager.toggleMute();
                     this.audioButton.textContent = status;
+                    console.log("New mute state:", this.soundManager.isMuted, "Button text:", status);
                 });
+            } else {
+                console.error("Audio button not found!");
             }
             console.log("UIController initialized. App is running.");
         }
