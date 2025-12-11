@@ -67,5 +67,40 @@ document.addEventListener('DOMContentLoaded', () => {
     rulesPanel.setAttribute('aria-hidden','true');
   });
   
+  /* [Ananda] Main Menu Audio Logic */
+  const menuAudioBtn = document.getElementById('menu-audio-btn');
+  // NOTE: This assumes mainmenu.html is in a subfolder (like 'michael/') 
+  // and needs to go up one level to find 'ananda/'. 
+  // If sound fails, try changing this to: 'ananda/background.mp3'
+  const menuMusic = new Audio('../ananda/background.mp3'); 
+  menuMusic.loop = true;
+  menuMusic.volume = 0.3;
+  let menuMuted = false;
 
+  // 1. Browser Autoplay Hack: Try to play immediately
+  menuMusic.play().catch(e => {
+      console.log("Autoplay blocked. Waiting for interaction.");
+  });
+
+  // 2. Fallback: Start music on the VERY FIRST click anywhere on the page
+  document.addEventListener('click', () => {
+      if (!menuMuted && menuMusic.paused) {
+          menuMusic.play().catch(e => {});
+      }
+  }, { once: true });
+
+  // 3. Toggle Button Logic
+  if (menuAudioBtn) {
+    menuAudioBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Stop click from triggering other things
+      menuMuted = !menuMuted;
+      if (menuMuted) {
+        menuMusic.pause();
+        menuAudioBtn.textContent = "🔇 Off";
+      } else {
+        menuMusic.play().catch(e => {});
+        menuAudioBtn.textContent = "🔊 On";
+      }
+    });
+  }
 });

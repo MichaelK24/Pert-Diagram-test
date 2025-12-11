@@ -9,6 +9,7 @@
 <body>
   <div class="bg"></div>
   <div class="menu-container">
+    <button id="menu-audio-btn" class="audio-control" style="position: absolute; top: 20px; right: 20px; z-index: 1000;">🔊 On</button>
     <img src="images/logopng.png" alt="PERT Diagram" class="logo-img">
     <div class="logo">PERT Diagram</div>
 
@@ -51,17 +52,5 @@
     </div>
   </div>
   <script src="mainmenu.js"></script>
-  <script src="../sound.js" onerror="console.error('❌ sound.js FAILED to load')"></script>
-  <script>
-      const sound = new SoundManager();
-  
-      // Force-start music when Start button is clicked
-      document.getElementById("btn-start").addEventListener("click", () => {
-          if (!sound.isMuted && sound.bgMusic.paused) {
-              sound.bgMusic.play().catch(()=>{});
-          }
-      });
-  </script>
-
 </body>
 </html>
