@@ -1,31 +1,28 @@
-Team: Special Force ![Pert Chart logo](https://github.com/user-attachments/assets/230052a6-83e2-416e-9ede-274026cfe213) 
+<img width="500" height="500" alt="logopng" src="https://github.com/user-attachments/assets/576541c0-0a2e-4f17-8b8b-5f619f5bd2a6" />
 
-Pert Chart Simulator: Readme  
+Team: Special Force Pert Chart logo
 
-Build Version: 1.0 Engine: JavaScript (ES6), HTML5, CSS3  
+Pert Chart Simulator: Readme
 
-Download Instructions:  
+Build Version: 1.0 Engine: JavaScript (ES6), HTML5, CSS3
 
-No download is required. The project is hosted live on the web.  
+Download Instructions:
 
-Live Link: https: pertchartgame.netlify.app     
+No download is required. The project is hosted live on the web.
 
-Running the Game:  
+Live Link: [pertchartgame.netlify.app](https://clinquant-baklava-53792d.netlify.app/michael/mainmenu.html)
 
-Open the Netlify link in any modern web browser (Chrome, Firefox, Safari, Edge).  
+Running the Game:
 
-System Requirements:  
-
-OS: Any (Windows, macOS, Linux, Android, iOS)  
-
-Hardware: Any device with a web browser and an internet connection.   
-
-QR Code:  
-<img width="154" height="151" alt="image" src="https://github.com/user-attachments/assets/ee2412dd-fe51-4578-bf46-a315f017d595" />
+Open the Netlify link in any modern web browser (Chrome, Firefox, Safari, Edge).
 
 
+System Requirements:
 
+OS: Any (Windows, macOS, Linux, Android, iOS)
 
- 
+Hardware: Any device with a web browser and an internet connection.
 
- 
+QR Code:
+
+<img width="3000" height="3000" alt="frame" src="https://github.com/user-attachments/assets/402b6ad5-ae86-4f6a-b6cc-1c5f7b5dc332" />
